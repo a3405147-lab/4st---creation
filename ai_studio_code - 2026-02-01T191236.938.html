@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇯🇵 일본 여행 일정 (2/4 ~ 2/7)</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b6b; /* 여행의 설렘을 담은 코랄 핑크 */
+            --secondary-color: #4ecdc4; /* 청량한 민트 */
+            --bg-color: #f7f9fc;
+            --text-color: #2d3436;
+            --card-bg: #ffffff;
+            --accent: #ffeaa7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #ff8e8e);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem 1rem;
+        }
+
+        /* Timeline Card */
+        .day-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            border-left: 6px solid var(--secondary-color);
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        /* Card Header (Clickable) */
+        .day-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            user-select: none;
+        }
+
+        .day-date {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .day-title {
+            font-size: 1.1rem;
+            color: #636e72;
+            font-weight: 500;
+        }
+
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        /* Card Details (Hidden by default) */
+        .day-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+            background-color: #fafafa;
+        }
+
+        .day-card.active .day-details {
+            max-height: 2000px; /* 충분히 큰 값 */
+            transition: max-height 0.5s ease-in-out;
+            padding-bottom: 1.5rem;
+        }
+
+        .day-card.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Schedule Items */
+        .schedule-list {
+            list-style: none;
+            padding: 0 1.5rem;
+        }
+
+        .schedule-item {
+            display: flex;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            align-items: flex-start;
+        }
+
+        .schedule-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .schedule-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            color: #2d3436;
+        }
+
+        .schedule-content p {
+            font-size: 0.9rem;
+            color: #636e72;
+            margin-bottom: 0.2rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.3rem;
+            margin-top: 0.3rem;
+        }
+
+        .tag.time { background-color: #e3f2fd; color: #1565c0; }
+        .tag.flight { background-color: #e8f5e9; color: #2e7d32; }
+        .tag.food { background-color: #fff3e0; color: #e65100; }
+        .tag.alt { background-color: #f3e5f5; color: #7b1fa2; }
+        .tag.car { background-color: #eceff1; color: #37474f; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #b2bec3;
+            font-size: 0.8rem;
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .day-card {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .day-card:nth-child(1) { animation-delay: 0.1s; }
+        .day-card:nth-child(2) { animation-delay: 0.2s; }
+        .day-card:nth-child(3) { animation-delay: 0.3s; }
+        .day-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 2rem; }
+            .day-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .toggle-icon { position: absolute; right: 1.5rem; top: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🇯🇵 일본 여행</h1>
+        <p>2026.02.04(수) ~ 02.07(토)</p>
+        <p style="font-size: 0.9rem; margin-top:0.5rem;">후쿠오카 & 벳푸 온천 힐링</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Day 1 -->
+        <div class="day-card" onclick="toggleDetails(this)">
+            <div class="day-header">
+                <span class="day-date">2/4 (수)</span>
+                <span class="day-title">출국 & 후쿠오카 도착</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="day-details">
+                <ul class="schedule-list">
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🚗</span>
+                        <div class="schedule-content">
+                            <h3>공항 출발</h3>
+                            <span class="tag time">08:00 남양주 출발</span>
+                            <span class="tag time">10:00 영월 출발</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🍜</span>
+                        <div class="schedule-content">
+                            <h3>점심 식사</h3>
+                            <p>함지박 소머리국밥 또는 송원칼국수</p>
+                            <span class="tag food">선택</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">✈️</span>
+                        <div class="schedule-content">
+                            <h3>비행기 탑승 (티웨이항공)</h3>
+                            <p>TW223편</p>
+                            <span class="tag time">15:35 출발</span>
+                            <span class="tag time">17:00 도착</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🏙️</span>
+                        <div class="schedule-content">
+                            <h3>후쿠오카 관광</h3>
+                            <p>후쿠오카 타워</p>
+                            <p>시사이드 모모치 해변공원</p>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🍱</span>
+                        <div class="schedule-content">
+                            <h3>저녁 식사</h3>
+                            <p>1순위: まさ庄 (마사쇼, Masasho)</p>
+                            <p>대안: 博多めんたいやまや食堂 (마크이즈 후쿠오카 모모치점)</p>
+                            <span class="tag alt">대안 있음</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🏨</span>
+                        <div class="schedule-content">
+                            <h3>숙소 체크인</h3>
+                            <p>The Residential Suites Fukuoka</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="day-card" onclick="toggleDetails(this)">
+            <div class="day-header">
+                <span class="day-date">2/5 (목)</span>
+                <span class="day-title">렌터카 & 벳푸 온천 투어</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="day-details">
+                <ul class="schedule-list">
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🚙</span>
+                        <div class="schedule-content">
+                            <h3>렌터카 픽업</h3>
+                            <p>후쿠오카 공항 근처 (RAKURAKU RENTAL CAR)</p>
+                            <p>* ETC 카드 대여 필수</p>
+                            <span class="tag time">10:00 픽업</span>
+                            <span class="tag car">라쿠라쿠 렌터카</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🥩</span>
+                        <div class="schedule-content">
+                            <h3>점심 식사</h3>
+                            <p>Hita2989 (히타니쿠야쿠) 야키니쿠</p>
+                            <span class="tag food">야키니쿠</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">♨️</span>
+                        <div class="schedule-content">
+                            <h3>벳푸 지옥 온천 순례</h3>
+                            <p>🌊 우미 지옥 (바다)</p>
+                            <p>💨 가마도 지옥 (가마솥) - 온천 계란과 라무네 사이다</p>
+                            <p>🐊 오니야마 지옥 (악어)</p>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🍣</span>
+                        <div class="schedule-content">
+                            <h3>저녁 식사</h3>
+                            <p>1순위: 카메쇼 쿠루쿠루 스시 (회전초밥)</p>
+                            <p>대안: 스시메이진 벳푸 츠루미점</p>
+                            <span class="tag food">스시</span>
+                            <span class="tag alt">대안 있음</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🏨</span>
+                        <div class="schedule-content">
+                            <h3>숙소 체크인</h3>
+                            <p>Grand Mercure Beppu Bay Resort & Spa</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Day 3 -->
+        <div class="day-card" onclick="toggleDetails(this)">
+            <div class="day-header">
+                <span class="day-date">2/6 (금)</span>
+                <span class="day-title">수족관 & 하카타 복귀</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="day-details">
+                <ul class="schedule-list">
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🏖️</span>
+                        <div class="schedule-content">
+                            <h3>오전 관광</h3>
+                            <p>벳푸 해변 모래 찜질장</p>
+                            <p>우미타마고 수족관</p>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🍖</span>
+                        <div class="schedule-content">
+                            <h3>점심 식사</h3>
+                            <p>이치리키 (一力) - 고기 요리</p>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🛍️</span>
+                        <div class="schedule-content">
+                            <h3>오후 관광 & 쇼핑</h3>
+                            <p>돈키호테 후쿠오카 나카스점</p>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🍜</span>
+                        <div class="schedule-content">
+                            <h3>저녁 식사</h3>
+                            <p>스케산 우동 하카타 치요점 (博多千代店)</p>
+                            <span class="tag food">우동</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🏠</span>
+                        <div class="schedule-content">
+                            <h3>숙소 체크인</h3>
+                            <p>goom monthly Hotel Hakata-Higashihie-Ekimae</p>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🔑</span>
+                        <div class="schedule-content">
+                            <h3>렌터카 반납</h3>
+                            <span class="tag time">20:00 반납 완료</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Day 4 -->
+        <div class="day-card" onclick="toggleDetails(this)">
+            <div class="day-header">
+                <span class="day-date">2/7 (토)</span>
+                <span class="day-title">귀국</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="day-details">
+                <ul class="schedule-list">
+                    <li class="schedule-item">
+                        <span class="schedule-icon">🚕</span>
+                        <div class="schedule-content">
+                            <h3>공항 이동</h3>
+                            <p>택시 이용</p>
+                            <span class="tag time">07:00 출발</span>
+                        </div>
+                    </li>
+                    <li class="schedule-item">
+                        <span class="schedule-icon">✈️</span>
+                        <div class="schedule-content">
+                            <h3>비행기 탑승 (에어로케이)</h3>
+                            <p>RF331편</p>
+                            <span class="tag time">09:50 출발</span>
+                            <span class="tag time">11:10 도착</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Enjoy your Trip to Japan! 🌸</p>
+        <p>© 2026 Travel Plan</p>
+    </footer>
+
+    <script>
+        function toggleDetails(card) {
+            // 다른 열린 카드들 닫기 (원하면 주석 해제하여 아코디언 모드로 사용)
+            /*
+            const allCards = document.querySelectorAll('.day-card');
+            allCards.forEach(c => {
+                if(c !== card) c.classList.remove('active');
+            });
+            */
+            
+            // 클릭한 카드 토글
+            card.classList.toggle('active');
+        }
+
+        // 페이지 로드 시 첫 번째 날짜는 열어두기
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstCard = document.querySelector('.day-card');
+            if(firstCard) firstCard.classList.add('active');
+        });
+    </script>
+</body>
+</html>
